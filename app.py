@@ -36,7 +36,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATA DATABASE LENGKAP DUKCAPIL ---
+# --- DATA DATABASE LENGKAP DUKCAPIL (REVISI SAKSI) ---
 data_layanan = {
     "Kartu Keluarga (KK)": {
         "KK Baru": {
@@ -78,16 +78,54 @@ data_layanan = {
     },
     "Akta Sipil": {
         "Akta Lahir": {
-            "syarat": ["Surat Ket. Lahir Asli", "Buku Nikah Ortu", "KK & KTP Ortu", "KTP 2 Saksi", "Formulir F-2.01"],
+            "syarat": [
+                "Mengisi Formulir Akta Anak (TTD Kepala Desa/Lurah)",
+                "Ket. Lahir Bidan/RS atau SPTJM Kebenaran Kelahiran",
+                "FC Buku Nikah / Kutipan Akta Nikah",
+                "FC KTP Kedua Orang Tua",
+                "FC KTP 2 Orang Saksi",
+                "FC Kartu Keluarga (Nama anak SUDAH TERTERA di KK)",
+                "FC Ijazah Anak (Bagi yang sudah punya Ijazah)",
+                "FC Akta Kelahiran anak lain/saudara (Jika ada)"
+            ],
             "form": "f201.pdf"
         },
-        "Akta Mati": {
-            "syarat": ["Surat Kematian Dokter", "KK & KTP Jenazah", "KTP Pelapor & 2 Saksi", "Formulir F-2.29"],
-            "form": "f229.pdf"
-        },
         "Akta Kawin": {
-            "syarat": ["Surat Kawin Agama", "Akta Lahir Suami Istri", "KK & KTP Suami Istri", "Foto 4x6 (4 Lembar)", "Formulir F-2.12"],
+            "syarat": [
+                "Mengisi Formulir Akta Perkawinan (TTD Kepala Desa/Lurah)",
+                "FC Akta Kelahiran Suami & Istri",
+                "FC Surat Nikah / Akta Nikah Agama",
+                "FC KTP Suami & Istri",
+                "FC KTP 2 Orang Saksi",
+                "FC Kartu Keluarga",
+                "FC Ijazah / SK Terakhir Suami & Istri",
+                "Foto Gandeng Berwarna 4x6 (4 Lembar)",
+                "FC Akta Lahir/Ijazah Anak (Jika ada anak yang mau disahkan)"
+            ],
             "form": "f212.pdf"
+        },
+        "Akta Pengesahan": {
+             "syarat": [
+                "Mengisi Formulir Akta Pengesahan Anak (TTD Kades/Lurah)",
+                "Ket. Lahir Bidan/RS atau SPTJM Kelahiran",
+                "FC Akta Nikah (1 Lembar)",
+                "FC Akte Kelahiran Anak (1 Lembar)",
+                "FC KTP Orang Tua",
+                "FC KTP 2 Orang Saksi",
+                "Kedua Orang Tua WAJIB HADIR",
+                "FC Kartu Keluarga"
+            ],
+            "form": "f_pengesahan.pdf"
+        },
+        "Akta Mati": {
+            "syarat": [
+                "Mengisi Formulir Akta Kematian (TTD Kepala Desa/Lurah)",
+                "Surat Keterangan Kematian (Desa/Lurah/RS)",
+                "FC KTP 2 Orang Saksi",
+                "FC Kartu Keluarga Baru (Setelah Pisah KK)",
+                "KK Asli (Yang Meninggal)"
+            ],
+            "form": "f229.pdf"
         }
     },
     "Pindah Penduduk": {
@@ -118,7 +156,6 @@ def main():
     # Header
     col_img, col_txt = st.columns([1, 4])
     with col_img:
-        # Gunakan use_container_width=True agar responsif
         st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/100px-Lambang_Kabupaten_Ngada.png", use_container_width=True)
     with col_txt:
         st.markdown("### 🏛️ SIPEDO DUKCAPIL")
@@ -132,20 +169,17 @@ def main():
 
     if kategori:
         data_sub = data_layanan[kategori]
-        # Ambil nama tab sebagai LIST string
         list_nama_tab = list(data_sub.keys())
         
         # Buat Tabs
         tabs = st.tabs(list_nama_tab)
 
-        # LOOPING YANG BENAR (Menggunakan ZIP atau Index)
         for i, tab_objek in enumerate(tabs):
-            nama_tab_saat_ini = list_nama_tab[i] # Ambil nama teks tab berdasarkan index
+            nama_tab_saat_ini = list_nama_tab[i]
             
             with tab_objek:
                 st.write("")
                 
-                # Mengambil detail dari database menggunakan NAMA TEKS
                 detail = data_sub[nama_tab_saat_ini]
                 syarat_list = detail["syarat"]
                 nama_form = detail["form"]
@@ -156,7 +190,6 @@ def main():
                     
                     checked_count = 0
                     for idx, item in enumerate(syarat_list):
-                        # Key unik agar checkbox tidak bentrok
                         if st.checkbox(item, key=f"{nama_tab_saat_ini}_{idx}"):
                             checked_count += 1
                     
@@ -197,6 +230,10 @@ def main():
         **Jam Pelayanan:**
         * Senin-Kamis: 08.00 - 15.00
         * Jumat: 08.00 - 11.00
+        
+        **Layanan Pengaduan/Kontak (WA):**
+        * Akta Perkawinan/Pengesahan: 082-145-506-769 (Joni)
+        * Akta Kelahiran/Kematian: 081-237-352-476 (Rahman)
         
         **Alamat:** Kantor Dukcapil Kabupaten Ngada
         """)
