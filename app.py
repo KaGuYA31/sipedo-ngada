@@ -72,7 +72,7 @@ data_layanan = {
                 "KTP-el Kepala Keluarga",
                 "FC Ijazah/Akta Lahir anak (Sebagai dasar validasi ulang)"
             ],
-            "form": "f101.pdf" # Menggunakan form permohonan KK kembali
+            "form": "f101.pdf" 
         },
         "Pindah Datang": {
             "syarat": [
@@ -140,7 +140,7 @@ data_layanan = {
 def get_file_content(filename):
     """Membaca file dari folder formulir"""
     try:
-        # Folder tempat Anda menyimpan file PDF/Excel
+        # Folder tempat Anda menyimpan file PDF
         with open(os.path.join("formulir", filename), "rb") as f:
             return f.read()
     except FileNotFoundError:
@@ -179,7 +179,8 @@ def main():
                         if detail['form']:
                             f_bytes = get_file_content(detail['form'])
                             if f_bytes:
-                                st.download_button(f"⬇️ Unduh Formulir", f_bytes, detail['form'], key=f"btn_{nama_layanan}")
+                                # PERBAIKAN: Menambahkan key unik
+                                st.download_button(f"⬇️ Unduh Formulir", f_bytes, detail['form'], key=f"btn_search_{nama_layanan}")
                             else:
                                 st.warning(f"⚠️ File '{detail['form']}' belum diupload ke server.")
         if not found:
@@ -225,7 +226,15 @@ def main():
                         st.write("")
                         f_bytes = get_file_content(detail['form'])
                         if f_bytes:
-                            st.download_button(f"📥 Download Formulir", f_bytes, detail['form'], mime="application/pdf")
+                            # PERBAIKAN UTAMA DI SINI (Menambahkan KEY unik)
+                            # Key dibuat dari gabungan teks agar tidak duplikat
+                            st.download_button(
+                                label="📥 Download Formulir",
+                                data=f_bytes,
+                                file_name=detail['form'],
+                                mime="application/pdf",
+                                key=f"btn_tab_{nama_layanan}" # KEY UNIK DITAMBAHKAN
+                            )
                         else:
                             # Pesan error halus jika file belum ada di folder
                             st.warning("⚠️ Formulir digital sedang disiapkan admin.")
