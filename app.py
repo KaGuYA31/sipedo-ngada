@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS FIX TAMPILAN ---
+# --- CSS FIX TAMPILAN & LOGO ---
 st.markdown("""
     <style>
     /* 1. Container Utama */
@@ -21,41 +21,30 @@ st.markdown("""
         max-width: 100% !important;
     }
     
-    /* 2. Judul di HP agar tidak terlalu besar */
+    /* 2. KUNCI PERBAIKAN LOGO (Agar tidak buram/terpotong) */
+    .header-logo {
+        max-height: 95px;    /* Batasi tinggi maksimal agar rapi */
+        width: auto;         /* Lebar menyesuaikan proporsi aslinya (anti-gepeng) */
+        max-width: 100%;     /* Agar tidak melebar keluar kolom di HP kecil */
+        object-fit: contain; /* PENTING: Menjamin gambar tampil utuh, tidak terpotong */
+        display: block;      /* Agar posisinya pas */
+    }
+
+    /* 3. Judul di HP agar tidak terlalu besar */
     @media (max-width: 768px) {
-        h2 { font-size: 1.5rem !important; }
+        h2 { font-size: 1.5rem !important; margin-top: 10px !important;}
         p { font-size: 0.9rem !important; }
         .block-container { padding-left: 1rem; padding-right: 1rem; }
+        /* Di HP, beri sedikit jarak antara logo dan teks */
+        div[data-testid="column"]:nth-of-type(2) { margin-top: 5px; }
     }
 
-    /* 3. Tabs Styling */
-    .stTabs [data-baseweb="tab-list"] { 
-        gap: 5px; 
-        background-color: white; 
-        padding: 5px; 
-        border-radius: 8px; 
-        border: 1px solid #ddd; 
-        flex-wrap: wrap; 
-    }
-    .stTabs [data-baseweb="tab"] { 
-        height: auto; 
-        background-color: #f8f9fa; 
-        color: #004085; 
-        border: 1px solid #dee2e6; 
-        border-radius: 4px; 
-        font-weight: 600; 
-        font-size: 14px; 
-        padding: 8px 12px; 
-        flex-grow: 1; 
-        text-align: center;
-    }
-    .stTabs [aria-selected="true"] { 
-        background-color: #004085 !important; 
-        color: #FFFFFF !important; 
-        border: 2px solid #002752 !important; 
-    }
+    /* 4. Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] { gap: 5px; background-color: white; padding: 5px; border-radius: 8px; border: 1px solid #ddd; flex-wrap: wrap; }
+    .stTabs [data-baseweb="tab"] { height: auto; background-color: #f8f9fa; color: #004085; border: 1px solid #dee2e6; border-radius: 4px; font-weight: 600; font-size: 14px; padding: 8px 12px; flex-grow: 1; text-align: center;}
+    .stTabs [aria-selected="true"] { background-color: #004085 !important; color: #FFFFFF !important; border: 2px solid #002752 !important; }
 
-    /* 4. Elements UI */
+    /* 5. Elements UI */
     .stCheckbox { background-color: #FFFFFF; border: 1px solid #cfe2ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; }
     div.stButton > button { width: 100%; border-radius: 8px; height: 45px; font-weight: bold; background-color: #28a745; color: white; border: none; }
     div[data-testid="stVerticalBlockBorderWrapper"] { border: 1px solid #dee2e6; border-radius: 10px; background-color: white; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -181,23 +170,30 @@ def get_file_content(filename):
 
 # --- APLIKASI UTAMA ---
 def main():
-    # --- HEADER DIPERBAIKI (Agar Logo tidak Raksasa di HP) ---
-    # Kita menggunakan kolom, tapi mengatur 'vertical_alignment' agar sejajar
-    # Dan mengatur 'gap' agar tidak terlalu jauh
-    c_logo, c_text = st.columns([1, 8], gap="small", vertical_alignment="center")
+    # --- HEADER DIPERBAIKI (Menggunakan HTML + CSS Class) ---
+    # Kita sesuaikan rasio kolom agar pas di HP dan Desktop
+    c_logo, c_text = st.columns([1.3, 7], gap="medium", vertical_alignment="center")
     
     with c_logo:
-        # PERBAIKAN: width=90 pixel. Ini memaksa ukuran tetap, tidak peduli HP atau Laptop.
+        # Tentukan sumber gambar
+        img_src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png"
         if os.path.exists("logo_ngada.png"):
-            st.image("logo_ngada.png", width=90)
-        else:
-            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png", width=90)
+            # Jika ada file lokal, kita harus membacanya sebagai base64 agar bisa masuk HTML
+            # (Ini cara paling aman untuk file lokal di Streamlit Cloud)
+            import base64
+            with open("logo_ngada.png", "rb") as f:
+                data = f.read()
+                encoded = base64.b64encode(data).decode()
+            img_src = f"data:image/png;base64,{encoded}"
+
+        # GUNAKAN HTML LANGSUNG untuk kontrol penuh via CSS class 'header-logo'
+        st.markdown(f'<img src="{img_src}" class="header-logo">', unsafe_allow_html=True)
 
     with c_text:
-        # Menggunakan HTML sederhana untuk kontrol teks yang lebih baik
+        # Menggunakan HTML untuk judul yang lebih rapi
         st.markdown("""
-        <h2 style='margin-bottom:0px; padding-bottom:0px;'>🏛️ SIPEDO DUKCAPIL</h2>
-        <p style='margin-top:0px; color:#555;'><b>Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</b></p>
+        <h2 style='margin-bottom:5px; padding-bottom:0px; color:#000;'>🏛️ SIPEDO DUKCAPIL</h2>
+        <p style='margin-top:0px; color:#444; font-weight:500;'>Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</p>
         """, unsafe_allow_html=True)
     
     st.divider()
