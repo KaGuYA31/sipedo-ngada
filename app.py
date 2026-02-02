@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import base64
 
 # --- KONFIGURASI HALAMAN ---
 st.set_page_config(
@@ -9,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS FIX TAMPILAN & LOGO ---
+# --- CSS FIX TAMPILAN & UI ---
 st.markdown("""
     <style>
     /* 1. Container Utama */
@@ -21,22 +22,20 @@ st.markdown("""
         max-width: 100% !important;
     }
     
-    /* 2. KUNCI PERBAIKAN LOGO (Agar tidak buram/terpotong) */
+    /* 2. LOGO FIX (Anti Buram & Anti Gepeng) */
     .header-logo {
-        max-height: 95px;    /* Batasi tinggi maksimal agar rapi */
-        width: auto;         /* Lebar menyesuaikan proporsi aslinya (anti-gepeng) */
-        max-width: 100%;     /* Agar tidak melebar keluar kolom di HP kecil */
-        object-fit: contain; /* PENTING: Menjamin gambar tampil utuh, tidak terpotong */
-        display: block;      /* Agar posisinya pas */
+        max-height: 90px;    /* Tinggi maksimal */
+        width: auto;         /* Lebar otomatis */
+        max-width: 100%;     /* Jangan melebar keluar */
+        object-fit: contain; /* Gambar utuh presisi */
+        display: block;
     }
 
-    /* 3. Judul di HP agar tidak terlalu besar */
+    /* 3. Judul Responsif (HP vs Desktop) */
     @media (max-width: 768px) {
-        h2 { font-size: 1.5rem !important; margin-top: 10px !important;}
-        p { font-size: 0.9rem !important; }
+        h2 { font-size: 1.4rem !important; margin-top: 5px !important; }
+        p { font-size: 0.85rem !important; line-height: 1.2 !important; }
         .block-container { padding-left: 1rem; padding-right: 1rem; }
-        /* Di HP, beri sedikit jarak antara logo dan teks */
-        div[data-testid="column"]:nth-of-type(2) { margin-top: 5px; }
     }
 
     /* 4. Tabs Styling */
@@ -170,30 +169,27 @@ def get_file_content(filename):
 
 # --- APLIKASI UTAMA ---
 def main():
-    # --- HEADER DIPERBAIKI (Menggunakan HTML + CSS Class) ---
-    # Kita sesuaikan rasio kolom agar pas di HP dan Desktop
+    # --- HEADER DIPERBAIKI (Text Color Auto-Adaptive) ---
     c_logo, c_text = st.columns([1.3, 7], gap="medium", vertical_alignment="center")
     
     with c_logo:
-        # Tentukan sumber gambar
+        # Menangani Gambar (Lokal vs Online)
         img_src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png"
         if os.path.exists("logo_ngada.png"):
-            # Jika ada file lokal, kita harus membacanya sebagai base64 agar bisa masuk HTML
-            # (Ini cara paling aman untuk file lokal di Streamlit Cloud)
-            import base64
             with open("logo_ngada.png", "rb") as f:
-                data = f.read()
-                encoded = base64.b64encode(data).decode()
+                encoded = base64.b64encode(f.read()).decode()
             img_src = f"data:image/png;base64,{encoded}"
 
-        # GUNAKAN HTML LANGSUNG untuk kontrol penuh via CSS class 'header-logo'
+        # CSS class 'header-logo' menjamin gambar tajam & tidak terpotong
         st.markdown(f'<img src="{img_src}" class="header-logo">', unsafe_allow_html=True)
 
     with c_text:
-        # Menggunakan HTML untuk judul yang lebih rapi
+        # PERBAIKAN DI SINI:
+        # Saya MENGHAPUS 'color:#000' dan 'color:#444'.
+        # Sekarang warna teks akan otomatis menyesuaikan tema HP pengguna.
         st.markdown("""
-        <h2 style='margin-bottom:5px; padding-bottom:0px; color:#000;'>🏛️ SIPEDO DUKCAPIL</h2>
-        <p style='margin-top:0px; color:#444; font-weight:500;'>Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</p>
+        <h2 style='margin-bottom:5px; padding-bottom:0px;'>🏛️ SIPEDO DUKCAPIL</h2>
+        <p style='margin-top:0px; font-weight:500;'>Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</p>
         """, unsafe_allow_html=True)
     
     st.divider()
