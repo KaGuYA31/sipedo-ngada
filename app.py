@@ -5,27 +5,34 @@ import os
 st.set_page_config(
     page_title="SIPEDO Dukcapil Ngada",
     page_icon="🏛️",
-    layout="wide", # Layout WIDE aktif
+    layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS FULL WIDTH & UI FIX ---
+# --- CSS FIX TAMPILAN ---
 st.markdown("""
     <style>
-    /* 1. MENGATUR CONTAINER AGAR TIDAK TERPOTONG */
+    /* 1. Container Utama */
     .block-container {
         padding-top: 1.5rem;
         padding-bottom: 5rem;
-        padding-left: 3rem;  /* Memberi jarak manis di kiri */
-        padding-right: 3rem; /* Memberi jarak manis di kanan */
-        max-width: 100% !important; /* MEMAKSA LEBAR PENUH */
+        padding-left: 2rem;
+        padding-right: 2rem;
+        max-width: 100% !important;
+    }
+    
+    /* 2. Judul di HP agar tidak terlalu besar */
+    @media (max-width: 768px) {
+        h2 { font-size: 1.5rem !important; }
+        p { font-size: 0.9rem !important; }
+        .block-container { padding-left: 1rem; padding-right: 1rem; }
     }
 
-    /* 2. Tabs Styling */
+    /* 3. Tabs Styling */
     .stTabs [data-baseweb="tab-list"] { 
-        gap: 8px; 
+        gap: 5px; 
         background-color: white; 
-        padding: 10px; 
+        padding: 5px; 
         border-radius: 8px; 
         border: 1px solid #ddd; 
         flex-wrap: wrap; 
@@ -37,8 +44,8 @@ st.markdown("""
         border: 1px solid #dee2e6; 
         border-radius: 4px; 
         font-weight: 600; 
-        font-size: 15px; 
-        padding: 10px 20px; 
+        font-size: 14px; 
+        padding: 8px 12px; 
         flex-grow: 1; 
         text-align: center;
     }
@@ -48,20 +55,15 @@ st.markdown("""
         border: 2px solid #002752 !important; 
     }
 
-    /* 3. Checkbox & Button */
-    .stCheckbox { background-color: #FFFFFF; border: 1px solid #cfe2ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-    .stCheckbox p { color: #000000 !important; font-size: 16px !important; }
-    
-    div.stButton > button { width: 100%; border-radius: 8px; height: 50px; font-weight: bold; background-color: #28a745; color: white; border: none; font-size: 16px; }
-    div.stButton > button:hover { background-color: #218838; color: white; }
-    
-    /* 4. Search & Card */
-    div[data-testid="stTextInput"] input { border: 2px solid #004085; border-radius: 8px; padding: 12px; font-size: 16px; }
-    div[data-testid="stVerticalBlockBorderWrapper"] { border: 1px solid #dee2e6; border-radius: 10px; background-color: white; padding: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    /* 4. Elements UI */
+    .stCheckbox { background-color: #FFFFFF; border: 1px solid #cfe2ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; }
+    div.stButton > button { width: 100%; border-radius: 8px; height: 45px; font-weight: bold; background-color: #28a745; color: white; border: none; }
+    div[data-testid="stVerticalBlockBorderWrapper"] { border: 1px solid #dee2e6; border-radius: 10px; background-color: white; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    div[data-testid="stTextInput"] input { border: 2px solid #004085; border-radius: 8px; padding: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATABASE PELAYANAN ---
+# --- DATABASE REVISI FINAL ---
 data_layanan = {
     "Kartu Keluarga (KK)": { 
         "KK Baru (Membentuk Keluarga)": {
@@ -170,30 +172,33 @@ data_layanan = {
     }
 }
 
-# --- FUNGSI UTAMA ---
+# --- FUNGSI DOWNLOADER ---
 def get_file_content(filename):
     try:
         with open(os.path.join("formulir", filename), "rb") as f:
             return f.read()
     except: return None
 
+# --- APLIKASI UTAMA ---
 def main():
-    # --- HEADER ---
-    # Layout Kolom lebih fleksibel untuk full width
-    c1, c_logo, c_text, c2 = st.columns([0.2, 1, 6, 0.2])
+    # --- HEADER DIPERBAIKI (Agar Logo tidak Raksasa di HP) ---
+    # Kita menggunakan kolom, tapi mengatur 'vertical_alignment' agar sejajar
+    # Dan mengatur 'gap' agar tidak terlalu jauh
+    c_logo, c_text = st.columns([1, 8], gap="small", vertical_alignment="center")
     
     with c_logo:
-        # Menampilkan Logo
+        # PERBAIKAN: width=90 pixel. Ini memaksa ukuran tetap, tidak peduli HP atau Laptop.
         if os.path.exists("logo_ngada.png"):
-            st.image("logo_ngada.png", use_container_width=True)
+            st.image("logo_ngada.png", width=90)
         else:
-            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png", use_container_width=True)
+            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png", width=90)
 
     with c_text:
-        st.write("") 
-        st.markdown("## 🏛️ SIPEDO DUKCAPIL")
-        st.markdown("**Sistem Informasi Persyaratan Dokumen Kependudukan**")
-        st.caption("Dinas Kependudukan & Pencatatan Sipil Kabupaten Ngada")
+        # Menggunakan HTML sederhana untuk kontrol teks yang lebih baik
+        st.markdown("""
+        <h2 style='margin-bottom:0px; padding-bottom:0px;'>🏛️ SIPEDO DUKCAPIL</h2>
+        <p style='margin-top:0px; color:#555;'><b>Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</b></p>
+        """, unsafe_allow_html=True)
     
     st.divider()
 
