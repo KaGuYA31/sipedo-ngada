@@ -10,66 +10,68 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS FIX TAMPILAN (ADAPTIF) ---
+# --- CSS TAMPILAN ---
 st.markdown("""
     <style>
     /* 1. Container Utama */
     .block-container {
         padding-top: 1.5rem;
         padding-bottom: 5rem;
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
         max-width: 100% !important;
     }
     
-    /* 2. LOGO FIX */
-    .header-logo {
-        max-height: 90px;
-        width: auto;
-        max-width: 100%;
+    /* 2. HEADER KHUSUS (Flexbox) - KUNCI AGAR LOGO DISAMPING JUDUL DI HP */
+    .header-container {
+        display: flex;             /* Wajib: Agar berjejer ke samping */
+        flex-direction: row;       /* Baris */
+        align-items: center;       /* Rata tengah secara vertikal */
+        gap: 15px;                 /* Jarak antara logo dan teks */
+        margin-bottom: 20px;
+    }
+
+    .header-logo-img {
+        width: 65px;               /* Ukuran logo pas untuk HP & Laptop */
+        height: auto;
         object-fit: contain;
-        display: block;
     }
 
-    /* 3. Judul Responsif & ADAPTIF WARNA */
-    h2.custom-title {
-        margin-bottom: 5px; 
-        padding-bottom: 0px; 
-        color: var(--text-color); /* Ikuti warna tema pengguna */
-    }
-    p.custom-subtitle {
-        margin-top: 0px; 
-        font-weight: 500; 
-        color: var(--text-color); /* Ikuti warna tema pengguna */
-        opacity: 0.8; /* Sedikit transparan agar beda dengan judul */
+    .header-text {
+        display: flex;
+        flex-direction: column;
     }
 
-    @media (max-width: 768px) {
-        h2.custom-title { font-size: 1.4rem !important; }
-        p.custom-subtitle { font-size: 0.85rem !important; }
-        .block-container { padding-left: 1rem; padding-right: 1rem; }
+    .header-title {
+        margin: 0;
+        padding: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-color);
+        line-height: 1.2;
     }
 
-    /* 4. Tabs Styling (Aman untuk Gelap & Terang) */
+    .header-subtitle {
+        margin: 0;
+        padding: 0;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-color);
+        opacity: 0.8;
+    }
+
+    /* Penyesuaian Ukuran Font di HP agar tidak terlalu besar */
+    @media (max-width: 600px) {
+        .header-title { font-size: 1.4rem; }
+        .header-subtitle { font-size: 0.8rem; }
+        .header-logo-img { width: 50px; } /* Logo sedikit mengecil di HP */
+    }
+
+    /* 3. Tabs & UI Lainnya */
     .stTabs [data-baseweb="tab-list"] { gap: 5px; padding: 5px; border-radius: 8px; flex-wrap: wrap; }
-    .stTabs [data-baseweb="tab"] { 
-        height: auto; 
-        border-radius: 4px; 
-        font-weight: 600; 
-        font-size: 14px; 
-        padding: 8px 12px; 
-        flex-grow: 1; 
-        text-align: center;
-    }
-
-    /* 5. Elements UI - MENGHAPUS PAKSAAN WARNA */
-    /* Kita biarkan Streamlit mengatur warna checkbox agar selalu kontras */
+    .stTabs [data-baseweb="tab"] { height: auto; border-radius: 4px; font-weight: 600; font-size: 14px; padding: 8px 12px; flex-grow: 1; text-align: center;}
     .stCheckbox { padding: 10px; border-radius: 8px; margin-bottom: 5px; }
-    
-    /* Tombol Download tetap Hijau (Aman) */
     div.stButton > button { width: 100%; border-radius: 8px; height: 45px; font-weight: bold; background-color: #28a745; color: white; border: none; }
-    
-    /* Input & Card */
     div[data-testid="stTextInput"] input { border-radius: 8px; padding: 10px; border: 1px solid var(--text-color); }
     div[data-testid="stVerticalBlockBorderWrapper"] { border-radius: 10px; padding: 20px; border: 1px solid #ddd; }
     </style>
@@ -192,25 +194,26 @@ def get_file_content(filename):
     except: return None
 
 def main():
-    # --- HEADER ADAPTIF (GELAP/TERANG) ---
-    c_logo, c_text = st.columns([1.3, 7], gap="medium", vertical_alignment="center")
+    # --- HEADER KHUSUS (HTML FLEXBOX) ---
+    # Ini menjamin Logo & Teks selalu bersebelahan di HP
     
-    with c_logo:
-        # Menangani Gambar
-        img_src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png"
-        if os.path.exists("logo_ngada.png"):
-            with open("logo_ngada.png", "rb") as f:
-                encoded = base64.b64encode(f.read()).decode()
-            img_src = f"data:image/png;base64,{encoded}"
+    # 1. Siapkan Gambar (Base64)
+    img_src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png"
+    if os.path.exists("logo_ngada.png"):
+        with open("logo_ngada.png", "rb") as f:
+            encoded = base64.b64encode(f.read()).decode()
+        img_src = f"data:image/png;base64,{encoded}"
 
-        st.markdown(f'<img src="{img_src}" class="header-logo">', unsafe_allow_html=True)
-
-    with c_text:
-        # PERBAIKAN UTAMA: Menggunakan class CSS dengan var(--text-color)
-        st.markdown("""
-        <h2 class="custom-title">🏛️ SIPEDO DUKCAPIL</h2>
-        <p class="custom-subtitle">Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</p>
-        """, unsafe_allow_html=True)
+    # 2. Render HTML Layout
+    st.markdown(f"""
+    <div class="header-container">
+        <img src="{img_src}" class="header-logo-img">
+        <div class="header-text">
+            <h1 class="header-title">SIPEDO DUKCAPIL</h1>
+            <p class="header-subtitle">Sistem Informasi Persyaratan Dokumen Kependudukan<br>Kabupaten Ngada</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.divider()
 
