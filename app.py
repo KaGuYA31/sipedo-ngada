@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS FIX TAMPILAN & UI ---
+# --- CSS FIX TAMPILAN (ADAPTIF) ---
 st.markdown("""
     <style>
     /* 1. Container Utama */
@@ -22,32 +22,56 @@ st.markdown("""
         max-width: 100% !important;
     }
     
-    /* 2. LOGO FIX (Anti Buram & Anti Gepeng) */
+    /* 2. LOGO FIX */
     .header-logo {
-        max-height: 90px;    /* Tinggi maksimal */
-        width: auto;         /* Lebar otomatis */
-        max-width: 100%;     /* Jangan melebar keluar */
-        object-fit: contain; /* Gambar utuh presisi */
+        max-height: 90px;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
         display: block;
     }
 
-    /* 3. Judul Responsif (HP vs Desktop) */
+    /* 3. Judul Responsif & ADAPTIF WARNA */
+    h2.custom-title {
+        margin-bottom: 5px; 
+        padding-bottom: 0px; 
+        color: var(--text-color); /* Ikuti warna tema pengguna */
+    }
+    p.custom-subtitle {
+        margin-top: 0px; 
+        font-weight: 500; 
+        color: var(--text-color); /* Ikuti warna tema pengguna */
+        opacity: 0.8; /* Sedikit transparan agar beda dengan judul */
+    }
+
     @media (max-width: 768px) {
-        h2 { font-size: 1.4rem !important; margin-top: 5px !important; }
-        p { font-size: 0.85rem !important; line-height: 1.2 !important; }
+        h2.custom-title { font-size: 1.4rem !important; }
+        p.custom-subtitle { font-size: 0.85rem !important; }
         .block-container { padding-left: 1rem; padding-right: 1rem; }
     }
 
-    /* 4. Tabs Styling */
-    .stTabs [data-baseweb="tab-list"] { gap: 5px; background-color: white; padding: 5px; border-radius: 8px; border: 1px solid #ddd; flex-wrap: wrap; }
-    .stTabs [data-baseweb="tab"] { height: auto; background-color: #f8f9fa; color: #004085; border: 1px solid #dee2e6; border-radius: 4px; font-weight: 600; font-size: 14px; padding: 8px 12px; flex-grow: 1; text-align: center;}
-    .stTabs [aria-selected="true"] { background-color: #004085 !important; color: #FFFFFF !important; border: 2px solid #002752 !important; }
+    /* 4. Tabs Styling (Aman untuk Gelap & Terang) */
+    .stTabs [data-baseweb="tab-list"] { gap: 5px; padding: 5px; border-radius: 8px; flex-wrap: wrap; }
+    .stTabs [data-baseweb="tab"] { 
+        height: auto; 
+        border-radius: 4px; 
+        font-weight: 600; 
+        font-size: 14px; 
+        padding: 8px 12px; 
+        flex-grow: 1; 
+        text-align: center;
+    }
 
-    /* 5. Elements UI */
-    .stCheckbox { background-color: #FFFFFF; border: 1px solid #cfe2ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; }
+    /* 5. Elements UI - MENGHAPUS PAKSAAN WARNA */
+    /* Kita biarkan Streamlit mengatur warna checkbox agar selalu kontras */
+    .stCheckbox { padding: 10px; border-radius: 8px; margin-bottom: 5px; }
+    
+    /* Tombol Download tetap Hijau (Aman) */
     div.stButton > button { width: 100%; border-radius: 8px; height: 45px; font-weight: bold; background-color: #28a745; color: white; border: none; }
-    div[data-testid="stVerticalBlockBorderWrapper"] { border: 1px solid #dee2e6; border-radius: 10px; background-color: white; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    div[data-testid="stTextInput"] input { border: 2px solid #004085; border-radius: 8px; padding: 10px; }
+    
+    /* Input & Card */
+    div[data-testid="stTextInput"] input { border-radius: 8px; padding: 10px; border: 1px solid var(--text-color); }
+    div[data-testid="stVerticalBlockBorderWrapper"] { border-radius: 10px; padding: 20px; border: 1px solid #ddd; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -160,36 +184,32 @@ data_layanan = {
     }
 }
 
-# --- FUNGSI DOWNLOADER ---
+# --- FUNGSI UTAMA ---
 def get_file_content(filename):
     try:
         with open(os.path.join("formulir", filename), "rb") as f:
             return f.read()
     except: return None
 
-# --- APLIKASI UTAMA ---
 def main():
-    # --- HEADER DIPERBAIKI (Text Color Auto-Adaptive) ---
+    # --- HEADER ADAPTIF (GELAP/TERANG) ---
     c_logo, c_text = st.columns([1.3, 7], gap="medium", vertical_alignment="center")
     
     with c_logo:
-        # Menangani Gambar (Lokal vs Online)
+        # Menangani Gambar
         img_src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png"
         if os.path.exists("logo_ngada.png"):
             with open("logo_ngada.png", "rb") as f:
                 encoded = base64.b64encode(f.read()).decode()
             img_src = f"data:image/png;base64,{encoded}"
 
-        # CSS class 'header-logo' menjamin gambar tajam & tidak terpotong
         st.markdown(f'<img src="{img_src}" class="header-logo">', unsafe_allow_html=True)
 
     with c_text:
-        # PERBAIKAN DI SINI:
-        # Saya MENGHAPUS 'color:#000' dan 'color:#444'.
-        # Sekarang warna teks akan otomatis menyesuaikan tema HP pengguna.
+        # PERBAIKAN UTAMA: Menggunakan class CSS dengan var(--text-color)
         st.markdown("""
-        <h2 style='margin-bottom:5px; padding-bottom:0px;'>🏛️ SIPEDO DUKCAPIL</h2>
-        <p style='margin-top:0px; font-weight:500;'>Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</p>
+        <h2 class="custom-title">🏛️ SIPEDO DUKCAPIL</h2>
+        <p class="custom-subtitle">Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada</p>
         """, unsafe_allow_html=True)
     
     st.divider()
