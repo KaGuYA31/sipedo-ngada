@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS TAMPILAN ---
+# --- CSS TAMPILAN (Header Flexbox & UI) ---
 st.markdown("""
     <style>
     /* 1. Container Utama */
@@ -22,17 +22,17 @@ st.markdown("""
         max-width: 100% !important;
     }
     
-    /* 2. HEADER KHUSUS (Flexbox) - KUNCI AGAR LOGO DISAMPING JUDUL DI HP */
+    /* 2. HEADER KHUSUS (Flexbox) */
     .header-container {
-        display: flex;             /* Wajib: Agar berjejer ke samping */
-        flex-direction: row;       /* Baris */
-        align-items: center;       /* Rata tengah secara vertikal */
-        gap: 15px;                 /* Jarak antara logo dan teks */
+        display: flex;             
+        flex-direction: row;       
+        align-items: center;       
+        gap: 15px;                 
         margin-bottom: 20px;
     }
 
     .header-logo-img {
-        width: 65px;               /* Ukuran logo pas untuk HP & Laptop */
+        width: 70px; /* Ukuran logo disesuaikan */
         height: auto;
         object-fit: contain;
     }
@@ -60,11 +60,10 @@ st.markdown("""
         opacity: 0.8;
     }
 
-    /* Penyesuaian Ukuran Font di HP agar tidak terlalu besar */
     @media (max-width: 600px) {
         .header-title { font-size: 1.4rem; }
         .header-subtitle { font-size: 0.8rem; }
-        .header-logo-img { width: 50px; } /* Logo sedikit mengecil di HP */
+        .header-logo-img { width: 55px; } 
     }
 
     /* 3. Tabs & UI Lainnya */
@@ -77,7 +76,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATABASE REVISI FINAL ---
+# --- DATABASE PELAYANAN ---
 data_layanan = {
     "Kartu Keluarga (KK)": { 
         "KK Baru (Membentuk Keluarga)": {
@@ -194,17 +193,13 @@ def get_file_content(filename):
     except: return None
 
 def main():
-    # --- HEADER KHUSUS (HTML FLEXBOX) ---
-    # Ini menjamin Logo & Teks selalu bersebelahan di HP
-    
-    # 1. Siapkan Gambar (Base64)
+    # --- HEADER FLEXBOX ---
     img_src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png"
     if os.path.exists("logo_ngada.png"):
         with open("logo_ngada.png", "rb") as f:
             encoded = base64.b64encode(f.read()).decode()
         img_src = f"data:image/png;base64,{encoded}"
 
-    # 2. Render HTML Layout
     st.markdown(f"""
     <div class="header-container">
         <img src="{img_src}" class="header-logo-img">
@@ -289,7 +284,7 @@ def main():
                         else:
                             st.info("ℹ️ Tidak ada formulir khusus.")
 
-    # --- FOOTER ---
+    # --- FOOTER (LOKASI & JAM) ---
     st.markdown("---")
     c_foot1, c_foot2 = st.columns(2)
     with c_foot1:
@@ -299,8 +294,12 @@ def main():
                  st.balloons()
                  st.toast("Terima kasih!")
     with c_foot2:
-        with st.expander("📍 Kontak Petugas"):
-            st.markdown("**Dukcapil Kab. Ngada** - Jam Pelayanan: 08.00 - 15.00 WITA")
+        with st.expander("📍 Lokasi & Jam Pelayanan"):
+            # Update detail lokasi dan jam di sini
+            st.markdown("""
+            **Mall Pelayanan Publik (MPP) Kab. Ngada** Jl. TW Mengeruda, Ngedukelu, Bajawa  
+            **Jam Pelayanan:** Senin - Jumat, 09.00 - 15.00 WITA
+            """)
 
 if __name__ == "__main__":
     main()
