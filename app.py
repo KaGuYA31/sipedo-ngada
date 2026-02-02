@@ -41,7 +41,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATABASE REVISI (V7.0) ---
+# --- DATABASE REVISI FINAL (V7.1) ---
 data_layanan = {
     "Kartu Keluarga (KK)": { 
         "KK Baru (Membentuk Keluarga)": {
@@ -50,7 +50,6 @@ data_layanan = {
                 "FC Buku Nikah / Kutipan Akta Perkawinan (Wajib)",
                 "SPTJM Kebenaran Pasangan Suami Istri (Jika tidak ada Buku Nikah/Akta Perkawinan)",
                 "FC Ijazah / Akta Lahir (Untuk validasi biodata)"
-                # Golongan darah dihapus
             ],
             "form": "f101.pdf"
         },
@@ -59,9 +58,16 @@ data_layanan = {
                 "KK Lama (Asli)",
                 "Surat Keterangan Lahir (Bidan/RS) atau SPTJM Kelahiran",
                 "FC Buku Nikah / Akta Perkawinan Orang Tua"
-                # Golongan darah dihapus
             ],
             "form": "f101.pdf"
+        },
+        "Pindah Datang (Buat KK Sendiri)": {
+            "syarat": [
+                "Surat Keterangan Pindah (SKPWNI) dari daerah asal",
+                "Mengisi Formulir F-1.01 (Permohonan KK Baru)"
+                # TIDAK PERLU SURAT DOMISILI
+            ],
+            "form": "f101.pdf" 
         },
         "Pindah Datang (Numpang KK)": {
             "syarat": [
@@ -69,7 +75,6 @@ data_layanan = {
                 "KK Asli Penampung (KK yang ingin ditumpangi)",
                 "Surat Keterangan Domisili",
                 "Mengisi Formulir F-1.01"
-                # Surat pernyataan pindah dihapus
             ],
             "form": "f101.pdf" 
         },
@@ -99,28 +104,26 @@ data_layanan = {
                 "Fisik KTP Rusak (Jika Rusak)",
                 "FC Kartu Keluarga"
             ],
-            "form": None # Bisa ditambahkan file format surat pernyataan jika ada
+            "form": None 
         }
     },
     "Pencatatan Sipil": { 
         "Kelahiran (Akta)": {
             "syarat": [
-                # Formulir dihapus dari list syarat
                 "Surat Ket. Lahir (RS/Puskesmas) atau SPTJM",
                 "FC Buku Nikah / Akta Perkawinan Orang Tua",
                 "FC KTP Orang Tua",
                 "FC KTP 2 Orang Saksi",
                 "FC Kartu Keluarga (Nama anak sudah masuk KK)"
             ],
-            "form": None # Tombol download formulir dinonaktifkan
+            "form": None 
         },
         "Kematian (Akta)": {
             "syarat": [
-                # Formulir & KTP Pelapor/Saksi dihapus
                 "Surat Keterangan Kematian (RS/Desa/Lurah)",
                 "KK Asli (Yang meninggal)"
             ],
-            "form": None # Tombol download formulir dinonaktifkan
+            "form": None 
         },
         "Perkawinan (Akta)": {
             "syarat": [
