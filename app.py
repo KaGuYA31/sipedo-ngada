@@ -13,35 +13,34 @@ st.set_page_config(
 st.markdown("""
     <style>
     /* Container Utama */
-    .block-container { padding-top: 2rem; padding-bottom: 5rem; }
+    .block-container { padding-top: 1.5rem; padding-bottom: 5rem; }
     
     /* Media Query untuk Desktop vs HP */
     @media (min-width: 800px) {
-        .block-container { max-width: 1000px; margin: auto; }
+        .block-container { max-width: 950px; margin: auto; }
     }
     @media (max-width: 799px) {
         .block-container { max-width: 100%; padding-left: 1rem; padding-right: 1rem; }
     }
 
-    /* Tabs */
+    /* Tabs Styling */
     .stTabs [data-baseweb="tab-list"] { gap: 5px; background-color: white; padding: 8px; border-radius: 8px; border: 1px solid #ddd; flex-wrap: wrap; }
-    .stTabs [data-baseweb="tab"] { height: auto; background-color: #f8f9fa; color: #004085; border: 1px solid #dee2e6; border-radius: 4px; font-weight: 600; font-size: 14px; padding: 10px 20px; flex-grow: 1; text-align: center;}
+    .stTabs [data-baseweb="tab"] { height: auto; background-color: #f8f9fa; color: #004085; border: 1px solid #dee2e6; border-radius: 4px; font-weight: 600; font-size: 14px; padding: 10px 15px; flex-grow: 1; text-align: center;}
     .stTabs [aria-selected="true"] { background-color: #004085 !important; color: #FFFFFF !important; border: 2px solid #002752 !important; }
 
-    /* Checkbox & Elements */
-    .stCheckbox { background-color: #FFFFFF; border: 1px solid #cfe2ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .stCheckbox p { color: #000000 !important; font-size: 16px !important; }
-    
-    div.stButton > button { width: 100%; border-radius: 8px; height: 50px; font-weight: bold; background-color: #28a745; color: white; border: none; font-size: 16px; }
+    /* Checkbox & Button */
+    .stCheckbox { background-color: #FFFFFF; border: 1px solid #cfe2ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .stCheckbox p { color: #000000 !important; font-size: 15px !important; }
+    div.stButton > button { width: 100%; border-radius: 8px; height: 45px; font-weight: bold; background-color: #28a745; color: white; border: none; font-size: 15px; }
     div.stButton > button:hover { background-color: #218838; color: white; }
     
-    /* Search & Layout */
-    div[data-testid="stTextInput"] input { border: 2px solid #004085; border-radius: 8px; padding: 12px; font-size: 16px; }
-    div[data-testid="stVerticalBlockBorderWrapper"] { border: 1px solid #dee2e6; border-radius: 10px; background-color: white; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    /* Search & Box */
+    div[data-testid="stTextInput"] input { border: 2px solid #004085; border-radius: 8px; padding: 10px; font-size: 15px; }
+    div[data-testid="stVerticalBlockBorderWrapper"] { border: 1px solid #dee2e6; border-radius: 10px; background-color: white; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATABASE REVISI FINAL (V7.2) ---
+# --- DATABASE PELAYANAN ---
 data_layanan = {
     "Kartu Keluarga (KK)": { 
         "KK Baru (Membentuk Keluarga)": {
@@ -65,7 +64,6 @@ data_layanan = {
             "syarat": [
                 "Surat Keterangan Pindah (SKPWNI) dari daerah asal",
                 "Mengisi Formulir F-1.01 (Permohonan KK Baru)"
-                # TIDAK PERLU SURAT DOMISILI
             ],
             "form": "f101.pdf" 
         },
@@ -151,35 +149,40 @@ data_layanan = {
     }
 }
 
-# --- FUNGSI DOWNLOADER ---
+# --- FUNGSI UTAMA ---
 def get_file_content(filename):
     try:
         with open(os.path.join("formulir", filename), "rb") as f:
             return f.read()
-    except FileNotFoundError:
-        return None
+    except: return None
 
-# --- APLIKASI UTAMA ---
 def main():
-    # HEADER
-    c1, c2, c3 = st.columns([1, 6, 1]) 
-    with c2: 
-        col_logo, col_text = st.columns([1, 5])
-        with col_logo:
-             st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/100px-Lambang_Kabupaten_Ngada.png", use_container_width=True)
-        with col_text:
-            st.markdown("## 🏛️ SIPEDO DUKCAPIL")
-            st.markdown("**Sistem Informasi Persyaratan Dokumen Kependudukan - Kab. Ngada**")
+    # --- HEADER DENGAN LOGO ---
+    # Layout kolom: [Spacer Kecil] [Logo] [Judul] [Spacer Kecil]
+    c1, c_logo, c_text, c2 = st.columns([0.5, 1.2, 5, 0.5])
+    
+    with c_logo:
+        # Cek apakah logo lokal ada, jika tidak pakai URL
+        if os.path.exists("logo_ngada.png"):
+            st.image("logo_ngada.png", use_container_width=True)
+        else:
+            # Fallback jika file belum diupload: Pakai URL Wikipedia
+            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Lambang_Kabupaten_Ngada.png/600px-Lambang_Kabupaten_Ngada.png", use_container_width=True)
+
+    with c_text:
+        st.write("") # Spacer vertikal agar teks turun sedikit
+        st.markdown("### 🏛️ SIPEDO DUKCAPIL")
+        st.markdown("**Sistem Informasi Persyaratan Dokumen Kependudukan**")
+        st.caption("Dinas Kependudukan & Pencatatan Sipil Kabupaten Ngada")
     
     st.divider()
 
-    # SEARCH BAR
-    st.markdown("### 🔍 Cari Dokumen")
-    search_term = st.text_input("Pencarian Cepat", placeholder="Ketik layanan (contoh: Pindah, Akta, KK)").lower()
-    found = False
+    # --- SEARCH BAR ---
+    st.markdown("#### 🔍 Cari Dokumen")
+    search_term = st.text_input("Pencarian Cepat", placeholder="Ketik layanan (contoh: Pindah, Akta, KTP Hilang)").lower()
     
-    # LOGIKA PENCARIAN
     if search_term:
+        found = False
         st.info(f"Hasil pencarian: **'{search_term}'**")
         for kelompok, sub_layanan in data_layanan.items():
             for nama_layanan, detail in sub_layanan.items():
@@ -189,7 +192,6 @@ def main():
                         st.markdown("**Persyaratan:**")
                         for s in detail['syarat']:
                             st.markdown(f"- {s}")
-                        
                         if detail['form']:
                             f_bytes = get_file_content(detail['form'])
                             if f_bytes:
@@ -198,7 +200,7 @@ def main():
             st.warning("Dokumen tidak ditemukan.")
             st.markdown("---")
 
-    # MENU UTAMA
+    # --- MENU UTAMA ---
     if not search_term:
         st.info("👇 Silakan pilih kategori layanan:")
         kategori = st.selectbox("Pilih Kategori", list(data_layanan.keys()))
@@ -240,20 +242,14 @@ def main():
                             st.info("📄 **Formulir**")
                             f_bytes = get_file_content(detail['form'])
                             if f_bytes:
-                                st.download_button(
-                                    label="📥 Download PDF",
-                                    data=f_bytes,
-                                    file_name=detail['form'],
-                                    mime="application/pdf",
-                                    key=f"btn_tab_{nama_layanan}"
-                                )
+                                st.download_button("📥 Download PDF", f_bytes, detail['form'], mime="application/pdf", key=f"btn_tab_{nama_layanan}")
                                 st.caption(f"File: {detail['form']}")
                             else:
                                 st.warning("File belum tersedia.")
                         else:
                             st.info("ℹ️ Tidak ada formulir khusus.")
 
-    # FOOTER
+    # --- FOOTER ---
     st.markdown("---")
     c_foot1, c_foot2 = st.columns(2)
     with c_foot1:
@@ -264,9 +260,7 @@ def main():
                  st.toast("Terima kasih!")
     with c_foot2:
         with st.expander("📍 Kontak Petugas"):
-            st.markdown("""
-            **Dukcapil Kab. Ngada** Jam Pelayanan: 08.00 - 15.00 WITA
-            """)
+            st.markdown("**Dukcapil Kab. Ngada** - Jam Pelayanan: 08.00 - 15.00 WITA")
 
 if __name__ == "__main__":
     main()
