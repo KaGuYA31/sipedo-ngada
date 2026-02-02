@@ -41,7 +41,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATABASE REVISI FINAL (V7.1) ---
+# --- DATABASE REVISI FINAL (V7.2) ---
 data_layanan = {
     "Kartu Keluarga (KK)": { 
         "KK Baru (Membentuk Keluarga)": {
@@ -99,8 +99,8 @@ data_layanan = {
         },
         "Ganti Rusak/Hilang": {
             "syarat": [
+                "Surat Keterangan Kehilangan dari Kepolisian (WAJIB ADA)",
                 "Surat Pernyataan Kehilangan bermeterai 10.000 (TTD Pelapor)",
-                "Surat Keterangan Kehilangan Polisi (Opsional/Pendukung)",
                 "Fisik KTP Rusak (Jika Rusak)",
                 "FC Kartu Keluarga"
             ],
@@ -140,11 +140,11 @@ data_layanan = {
         "Pengesahan Anak": {
             "syarat": [
                 "Mengisi Formulir F-2.40",
+                "Kedua Orang Tua WAJIB HADIR",
                 "SPTJM Kelahiran (Bermeterai 10.000)",
                 "FC Buku Nikah / Akta Perkawinan Orang Tua",
                 "FC Akta Lahir Anak",
-                "FC KTP Orang Tua & Saksi",
-                "Kedua Orang Tua Wajib Tanda Tangan"
+                "FC KTP Orang Tua & Saksi"
             ],
             "form": "f_sah_anak.pdf"
         }
